@@ -1,0 +1,280 @@
+﻿@using Print.Moe.Net.Models
+<script src="~/Content/user/dist/js/bootstrap-select.js"></script>
+<link rel="stylesheet" href="~/Content/user/dist/css/bootstrap-select.css">
+<div class="main-panel">
+    @RenderPage("~/Views/User/_Header.cshtml")
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div>
+                    <div class="card">
+                        <div class="header">
+                            <h4 class="title">Config</h4>
+                        </div>
+                        <div class="content">
+                            <form method="post" name="selectfrom" role="form" action="/User/FavorImg">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <div class="col-lg-6">
+                                                @Html.DropDownList("tags", (List<SelectListItem>)ViewBag.taglist, new { @class = "show-tick form-control", multiple = "multiple", size = 5 })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Height</label>
+                                            <input type="text" class="form-control border-input" placeholder="No limit" name="height" @if (ViewBag.height != 99999) { @Html.Raw("value=\"" + @ViewBag.height + "\"") }>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Width</label>
+                                            <input type="text" class="form-control border-input" placeholder="No limit" name="width" @if (ViewBag.width != 99999) { @Html.Raw("value=\"" + @ViewBag.width + "\"") }>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Ext</label>
+                                            @Html.DropDownList("ext", (List<SelectListItem>)ViewBag.exts, new { @class = "show-tick form-control", multiple = "multiple", size = 5 })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Author</label>
+                                            <input type="text" class="form-control border-input" placeholder="Author" name="author" @if (ViewBag.Author != "") { @Html.Raw("value=\"" + @ViewBag.Author + "\"") }>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Sort By</label>
+                                            @Html.DropDownList("order", (List<SelectListItem>)ViewBag.order, new { @class = "show-tick form-control", multiple = "multiple", size = 5 })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>DESC</label>
+                                            @Html.DropDownList("desc", (List<SelectListItem>)ViewBag.desc, new { @class = "show-tick form-control", multiple = "multiple", size = 1 })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Url</label>
+                                            <input type="text" class="form-control border-input" placeholder="Url" name="url" @if (ViewBag.url != "") { @Html.Raw("value=\"" + @ViewBag.url + "\"") }>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-info btn-fill btn-wd">Search</button>
+                                </div>
+                                <div class="clearfix"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+            <div id="images" class="row">
+
+                @foreach (ImageModel img in (List<ImageModel>)ViewBag.imgs)
+                {
+                    string[] tmp = img.File_url.Split('.');
+                    var ext = tmp[tmp.Length - 1];
+                    <div id="@Html.Raw("kidp")@img.Kid" class="col-lg-4 col-md-5">
+                        <div class="card card-user">
+                            <div class="image">
+                                <img src=" http://img.misaka.asia/img/Preview?id=@img.Kid&ext=@ext&height=300" alt="...">
+                            </div>
+                            <div class="content">
+                                <div class="author">
+
+                                    <h4 class="title">
+                                        @img.Author<br>
+                                        <a href="#"><small>@Html.Raw("@") @img.Author</small></a>
+                                    </h4>
+                                </div>
+                                <p class="description text-center">
+
+                                    @if (img.Tags.Length > 210)
+                                    {
+                                        @Html.Raw(@img.Tags.Substring(0, 207) + "...");
+                                    }
+                                    else
+                                    {
+                                        @img.Tags
+                                    }
+
+                                </p>
+                            </div>
+                            <hr>
+                            <div class="text-center">
+                                <div class="row">
+                                    <div class="col-md-3 col-md-offset-1">
+                                        <h5>@img.Likes<br><small>Likes</small></h5>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @{ var size = Convert.ToInt32(img.File_size) / 1024;}
+                                        <h5>@size KB<br><small>Used</small></h5>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <btn id="updateFavor" value="@img.Kid" onclick="updateFavor(@img.Kid);" class="btn btn-lg "><i id="@Html.Raw("kid")@img.Kid" class="ti-heart @if (img.Status==1) { @Html.Raw("iactive"); } "></i></btn>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                }
+
+
+
+
+            </div>
+            <ul class="pagination">
+                <li><a href="/User/Select?page=1">&laquo;</a></li>
+                <li class="previous"><a href="#">&larr; Older</a></li>
+                @if (ViewBag.page == 1)
+                {
+                    <li class="active"><a href="/User/FavorImg?page=1&@ViewBag.tagStr">1</a></li>
+                    if (ViewBag.pageNum != 1)
+                    {
+                        <li><a href="/User/FavorImg?page=2&tags=@ViewBag.tagStr">2</a></li>
+                    }
+
+                }
+                else if (ViewBag.page == ViewBag.pageNum)
+                {
+
+                    var pm = @ViewBag.page - 1;
+                    <li><a href="/User/FavorImg?page=@pm&tags=@ViewBag.tagStr">@pm</a></li>
+                    <li class="active"><a href="/User/FavorImg?page=@ViewBag.page">@ViewBag.page</a></li>
+                }
+                else
+                {
+                    var pp = @ViewBag.page + 1;
+                    var pm = @ViewBag.page - 1;
+                    <li><a href="/User/FavorImg?page=@pm&tags=@ViewBag.tagStr">@pm</a></li>
+                    <li class="active"><a href="/User/FavorImg?page=@ViewBag.page">@ViewBag.page</a></li>
+                    <li><a href="/User/FavorImg?page=@pp&tags=@ViewBag.tagStr">@pp</a></li>
+                    <li><a href="#">...</a></li>
+                    <li><a href="/User/FavorImg?page=@ViewBag.pageNum">@ViewBag.pageNum</a></li>
+                    <li class="next"><a href="#">Newer &rarr;</a></li>
+                }
+
+
+                <li><a href="/User/FavorImg?page=@ViewBag.pageNum">&raquo;</a></li>
+            </ul>
+        </div>
+    </div>
+    <script>
+
+        function updateFavor(val) {
+            var kid = val;
+            $.ajax({
+                type: "post",
+                url: "/User/favor?kid=" + kid, success: function (result) {
+                    if (result == 1) {
+                        $("#kid" + val).addClass("iactive");
+                        $.notify({
+                            icon: 'ti-gift',
+                            message: '<br>已添加到 <b>你的收藏</b> .'
+
+                        }, {
+                                type: 'success',
+                                timer: 4000
+                            });
+
+                    };
+                    if (result == -1) {
+                        $("#kid" + val).removeClass("iactive");
+                        $("#kidp" + val).remove();
+                        $.notify({
+                            icon: 'ti-gift',
+                            message: '<br>已从 <b>你的收藏</b> 中移除 .<b id="cancelDel" value="' + val + '" onclick="updateFavor(' + val + ');" >撤销</b>'
+
+                        }, {
+                                type: 'info',
+                                timer: 4000
+                            });
+                    };
+                    if (result == 0) {
+                        $.notify({
+                            icon: 'ti-danger',
+                            message: '<br>出现错误 .'
+
+                        }, {
+                                type: 'danger',
+                                timer: 4000
+                            });
+                    }
+                }
+
+            });
+        };
+        $(document).ready(function () {
+
+            $('#tags').selectpicker({
+                liveSearch: true,
+                maxOptions: 2
+            });
+            $('#ext').selectpicker({
+                liveSearch: true,
+                maxOptions: 1
+            });
+            $('#order').selectpicker({
+                liveSearch: true,
+                maxOptions: 1
+            });
+            $('#desc').selectpicker({
+                liveSearch: true,
+                maxOptions: 1
+            });
+        });
+    </script>
+
+    <footer class="footer">
+        <div class="container-fluid">
+            <nav class="pull-left">
+                <ul>
+                    <li>
+                        <a href="http://www.creative-tim.com">
+                            Creative Tim
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://blog.creative-tim.com">
+                            Blog
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://www.creative-tim.com/license">
+                            Licenses
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright pull-right">
+                &copy;
+                <script>document.write(new Date().getFullYear())</script>, made with <i class="fa fa-heart heart"></i> by <a href="http://www.creative-tim.com">Creative Tim</a>
+            </div>
+        </div>
+    </footer>
+</div>

@@ -1,0 +1,252 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<!DOCTYPE html>
+<!--[if IE 8]>         <html class="no-js ie8"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+ <!--<![endif]-->
+
+<head>
+
+    <!-- Basics -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Print.Moe | 免费图片api</title>
+    <link name="author" href="https://by.cx" />
+    <meta name="description" content="Print.moe,提供免费的动画壁纸Api.">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" href="img/favicons/favicon.ico">
+
+    <!-- Mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- CSS -->
+    @Styles.Render("~/main/css")
+
+
+    <!-- Fonts -->
+    <link rel='stylesheet' href='https://fonts.cat.net/css?family=Lato:300,400,700'>
+
+</head>
+<body>
+
+    <div class="wrapper">
+
+        <header>
+            <a class="menu-icon jiji">
+                <span></span>
+            </a>
+            <nav class="menu visuallyhidden">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About me</a></li>
+                    <li><a href="#work">试试手气</a></li>
+                    <li><a href="/user">Controll Panel</a></li>
+                    <li><a href="/Reg">Register</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section id="home" class="row">
+            <div class="overlay">
+                <div class="col home-title jiji">
+                    <h1>Print.moe</h1>
+                    <h2>现已收录 @ViewBag.sum 张图片，今日api调用次数 @ViewBag.count</h2>
+                    <a href="api.jpg?id=@ViewBag.img" target="_blank" class="but">右键保存当前图片</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="row">
+            <div class="page about-content">
+                <div class="col about-title">
+                    <h3 data-100="-webkit-transform: translateX(100px); opacity:0;"
+                        data-500="-webkit-transform: translateX(0px); opacity:1;">
+                        About me
+                    </h3>
+                </div>
+                <div class="col empty">&nbsp;</div>
+                <div class="col about-description">
+                    <p data-100="opacity:0;"
+                       data-500="opacity:1;">Print.moe提供检索动画，漫画图片壁纸的api接口，你可以将本接口用于自己的网站用作背景图片等.</p>
+                    <a href="https://by.cx/2017/07/31/Print-moe-%E5%85%8D%E8%B4%B9%E7%9A%84%E5%8A%A8%E6%BC%AB%E5%A3%81%E7%BA%B8API/" class="but">了解更多</a>
+                </div>
+                <div class="col empty">&nbsp;</div>
+
+            </div>
+        </section>
+        <section id="services" class="row">
+            <div id="gid" class='google-ad testAd'>
+                <!-- pm -->
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:728px;height:90px"
+                     data-ad-client="ca-pub-2949782691473536"
+                     data-ad-slot="6507021387"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </section>
+
+        <section id="work" class="row">
+            <div class="work-content page">
+                <div class="col work-title">
+                    <h3 data-900="-webkit-transform: translateX(-100px); opacity:0;"
+                        data-1300="-webkit-transform: translateX(0px); opacity:1;">
+                        试试手气
+                    </h3>
+                </div>
+                <div class="col empty">&nbsp;</div>
+                <div class="col work-description">
+                    <p data-900="opacity:0;"
+                       data-1300="opacity:1;">想要找一张合适的背景图？可以试试本功能...</p>
+                    <p>
+                        <div id="tags">
+                            <c:forEach var="item" items="${map}">
+                                <a href="#work" onclick="changeTags('${item.key}')" class="but bluebut">${item.key}(${item.value})</a>
+                            </c:forEach>
+                        </div>
+                        <a href="#work" onclick="refresh(this)" class="but bluebut">换一批tag</a>
+                    </p>
+                    <a href="#work" id="changesample" class="but">再来3张</a>
+                </div>
+                <div class="col empty">&nbsp;</div>
+            </div>
+            <div class="work-examples page">
+
+
+            </div>
+        </section>
+
+        <hr>
+
+
+
+        <footer id="footer" class="row">
+            <div class="footer-content page">
+                <div class="col f1">
+                    <p>© 2017 Print.moe From <a href="https://by.cx/" target="_blank">编译程序</a> </p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <div class="loader"></div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            refresh();
+            var obj = document.getElementById("home");
+            obj.style.backgroundImage = "url('http://img.misaka.asia/img/SelectImgPng?id=@ViewBag.img')";
+            $.ajax({
+                url: '/img/SelectImgJson?order=4&limit=3&size=1000000',
+                type: "POST",
+                success: function (data) {
+                    
+                    $.each(data, function (i, val) {
+
+                        var content = '<div class="col work-item skrollable skrollable-after" data-1300="opacity:0;" data-1400="opacity:1;" style="opacity: 1;">' +
+                            '<img class="lazyload"  data-original="http://img.misaka.asia/img/Preview?height=300&&ext=jpg&id=' +
+                            val.Kid + '"alt="">' +
+                            '<div class="work-item-inside">' +
+                            '<div class="work-item-inside-content" style="margin-top: 74.5px;">' +
+                            '<h4>Design</h4>' +
+                            '<a href="#" class="but">Click here</a>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+                        $(".work-examples").append(content);
+                        $("img.lazyload").lazyload({ threshold: 180 });
+                    });
+
+                    return true;
+                },
+                error: function (ajaxobj) {
+                    if (ajaxobj.responseText != '')
+                        alert(ajaxobj.responseText);
+                }
+            });
+
+        });
+        $('#changesample').click(function () {
+            changeSample();
+        })
+        // Nav
+        function changeSample(tags) {
+            if (tags == null || tags == '') {
+                tags = 'girl';
+            }
+            $.ajax({
+                url: '/img/SelectImgJson?order=4&limit=3&size=1000000&tags=' + tags,
+                type: "POST",
+                success: function (data) {
+                    $(".work-examples").empty();
+                    $.each(data, function (i, val) {
+
+                        var content = '<div class="col work-item skrollable skrollable-after" data-1300="opacity:0;" data-1400="opacity:1;" style="opacity: 1;">' +
+                            '<img class="lazyload"  data-original="http://img.misaka.asia/img/SelectImgPng?id=' +
+                            val.Kid + '"alt="">' +
+                            '<div class="work-item-inside">' +
+                            '<div class="work-item-inside-content" style="margin-top: 74.5px;">' +
+                            '<h4>Design</h4>' +
+                            '<a href="#" class="but">Click here</a>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+                        $(".work-examples").append(content);
+                        $("img.lazyload").lazyload({ threshold: 180 });
+                    });
+
+                    return true;
+                },
+                error: function (ajaxobj) {
+                    if (ajaxobj.responseText != '')
+                        alert(ajaxobj.responseText);
+                }
+            });
+        };
+        $(function () {
+            setTimeout(function () {
+                if ($('.google-ad').height() == 0) {
+                    $("#services").append("<p>运营不易，请勿屏蔽广告</p>");
+                }
+            }, 3000);
+        });
+        function changeTags(tags) {
+            changeSample(tags);
+        };
+        function refresh() {
+            $.ajax({
+                url: '/img/getTags',
+                type: "POST",
+                success: function (data) {
+                    $("#tags").empty();
+                    $.each(JSON.parse(data), function (i, val) {
+
+                        var content = '<a href="#work" onclick="changeTags(\'' + val.name + '\')" class="but bluebut">' + val.name + '(' + val.times + ')</a>';
+                        $("#tags").append(content);
+
+                    });
+
+                    return true;
+                },
+                error: function (ajaxobj) {
+                    if (ajaxobj.responseText != '')
+                        alert(ajaxobj.responseText);
+                }
+            });
+        };
+    </script>
+    @Scripts.Render("~/main/js")
+
+
+</body>
+
+</html>
